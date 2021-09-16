@@ -26,10 +26,6 @@ LIST = cmd_setter.LIST_COMMAND
 DELETE = cmd_setter.DELETE_COMMAND
 HELP = cmd_setter.HELP_COMMAND
 
-# TODO Testing flairs
-# make self.get_guild(_) return an object that returns an object with id when get_role(id) is called
-# Make helper function that returns all added roles (all times payload.member.add_roles(<objects with id>) was called)
-
 
 # Contains common setup, teardown, helper methods to be used by test cases
 # testing the CommandSetter Cog.
@@ -44,8 +40,8 @@ class CommandSetterTest(unittest.TestCase):
 
         # Create a bot to test
         self.test_account = MagicMock(spec=discord.ClientUser)
-        self.bot = MagicMock(wraps=cmd_setter.CommandSetter(
-            self.test_account, db, ADMIN))
+        self.bot = MagicMock(
+            wraps=cmd_setter.CommandSetter(self.test_account, db, ADMIN))
 
     def tearDown(self):
         # Remove our test db for cleanliness
@@ -73,8 +69,9 @@ class CommandSetterTest(unittest.TestCase):
                 f"Got no response to message with content '{message.content}'")
             self.assertContainsAll(resp, expected_resp)
         else:
-            raise TypeError(f"Illegal expected response of type" /
-                            "{type(expected_resp)}. Must be a string, list, or None.")
+            raise TypeError(
+                f"Illegal expected response of type" /
+                "{type(expected_resp)}. Must be a string, list, or None.")
 
     # Triggers the bot with the given "discord.Message" (must be a Mock).
     # Returns the text of the bot's response, or None if there was no response.
@@ -133,8 +130,8 @@ class TestCreateAndDeleteCommands(CommandSetterTest):
 
     def test_delete(self):
         # Save a command.
-        self.send_check(
-            message(f"{SAVE} test I say something else", ADMIN), [])
+        self.send_check(message(f"{SAVE} test I say something else", ADMIN),
+                        [])
 
         # Delete it.
         self.send_check(message(f"{DELETE} test", ADMIN), ["test"])
@@ -225,8 +222,8 @@ class TestListCommands(CommandSetterTest):
 
     def test_does_not_list_random_commands_multiple_times(self):
         self.send_check(message(f"{RANDOM} test1 this is a test", ADMIN), [])
-        self.send_check(
-            message(f"{RANDOM} test1 this is another test", ADMIN), [])
+        self.send_check(message(f"{RANDOM} test1 this is another test", ADMIN),
+                        [])
 
         # Should only include "test1" once.
         r, _ = self.send(message(f"{LIST}", ADMIN))
@@ -244,15 +241,12 @@ class TestRandomCommands(CommandSetterTest):
 
     def test_responds_randomly(self):
         # Save 3 possible responses to the "test" command.
-        self.send_check(
-            message(f"{RANDOM} test response 1", ADMIN),
-            ["test", "response 1"])
-        self.send_check(
-            message(f"{RANDOM} test response 2", ADMIN),
-            ["test", "response 2"])
-        self.send_check(
-            message(f"{RANDOM} test response 3", ADMIN),
-            ["test", "response 3"])
+        self.send_check(message(f"{RANDOM} test response 1", ADMIN),
+                        ["test", "response 1"])
+        self.send_check(message(f"{RANDOM} test response 2", ADMIN),
+                        ["test", "response 2"])
+        self.send_check(message(f"{RANDOM} test response 3", ADMIN),
+                        ["test", "response 3"])
 
         # Count the occurrences of each response.
         totals = {"1": 0, "2": 0, "3": 0}
@@ -294,9 +288,8 @@ class TestRandomCommands(CommandSetterTest):
 
         # Attempt to overwrite a random command with a single command.
         # Should fail with an error telling the user to delete it first.
-        self.send_check(
-            message(f"{SAVE} test a different thingy.", ADMIN),
-            ["Sorry", f"{DELETE} test"])
+        self.send_check(message(f"{SAVE} test a different thingy.", ADMIN),
+                        ["Sorry", f"{DELETE} test"])
 
         # Could be either response
         self.send_check(message(f"{SUMMON_KEY}test"), ["response"])
@@ -373,7 +366,9 @@ def message(text, channel='arbitrary-channel'):
 
 
 # Wraps image in a "discord.Attachment", and adds it to the "discord.Message" (actually mocks).
-def _attach_image(msg: discord.Message, image: bytes, filename: str='file.png'):
+def _attach_image(msg: discord.Message,
+                  image: bytes,
+                  filename: str = 'file.png'):
     file_obj = discord.File(io.BytesIO(image), filename)
 
     attachment = MagicMock(spec=discord.Attachment)
