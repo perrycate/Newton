@@ -174,10 +174,12 @@ class CommandSetter(commands.Cog):
             await message.channel.send('\n'.join(line_queue))
 
         if message.content.startswith(HELP_COMMAND):
-            await message.channel.send(f"""
+            await message.channel.send(
+                f"""
 Save a command: {SAVE_COMMAND} <keyword> <response content>
 Save a random command: {RANDOM_COMMAND} <keyword> <response content> ({ADD_ALL_COMMAND} to add each word as a separate response)
 Use a command: {SUMMONING_KEY}<keyword>
 Delete a command: {DELETE_COMMAND} <keyword>
 List all commands: {LIST_COMMAND}
+Save a flair setting: {PREFIX}set-flair <message ID> <emoji> <@role>
 """)
